@@ -19,38 +19,34 @@ const LoginForm = () => {
     }
   };
 
+  const formFields = [
+    { id: 'email', type: 'email', label: 'Email', value: email, onChange: setEmail },
+    { id: 'password', type: 'password', label: 'Password', value: password, onChange: setPassword }
+  ];
+
   return (
     <div className="login-container">
       <div className="login-card-left">
         <p className="welcome-text">
-          Welcome to <span className="brand-name">upliance..</span>
+          Welcome to <span className="brand-name">upliance.ai </span>
         </p>
       </div>
-
 
       <div className="login-card-right">
         <p className="form-title">Log in</p>
         <form className="login-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">
-            Email:
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          <label htmlFor="password">
-            Password:
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
+          {formFields.map((field) => (
+            <label key={field.id} htmlFor={field.id}>
+              {field.label}:
+              <input
+                type={field.type}
+                id={field.id}
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                required
+              />
+            </label>
+          ))}
           <button type="submit">Login</button>
           {error && <p className="error-message">{error}</p>}
           <p className="register-link">
