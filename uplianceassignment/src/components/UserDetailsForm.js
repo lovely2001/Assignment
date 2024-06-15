@@ -5,82 +5,51 @@ const UserDetailsForm = ({
   handleInputChange,
   handleSaveChanges,
 }) => {
+
   const handleSubmit = (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     handleSaveChanges();
   };
 
+  const formFields = [
+    { label: "Email:", type: "email", name: "email" },
+    { label: "First Name:", type: "text", name: "firstName" },
+    { label: "Last Name:", type: "text", name: "lastName" },
+    { label: "Date of Birth:", type: "date", name: "dob" },
+    { label: "Phone:", type: "tel", name: "phone" },
+    { label: "Gender:", type: "select", name: "gender" },
+  ];
+
   return (
     <div>
-      <h3>User Details</h3>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email" 
-            name="email"
-            value={selectedUser.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>First Name:</label>
-          <input
-            type="text"
-            name="firstName"
-            value={selectedUser.firstName}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Last Name:</label>
-          <input
-            type="text"
-            name="lastName"
-            value={selectedUser.lastName}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            name="dob"
-            value={selectedUser.dob}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Gender:</label>
-          <select
-            name="gender"
-            value={selectedUser.gender}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label>Phone:</label>
-          <input
-            type="tel" 
-            name="phone"
-            value={selectedUser.phone}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <button
-          className="save-changes-button"
-          type="submit" 
-        >
+        {formFields.map((field) => (
+          <div className="form-group" key={field.name}>
+            <label>{field.label}</label>
+            {field.type === "select" ? (
+              <select
+                name={field.name}
+                value={selectedUser[field.name]}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            ) : (
+              <input
+                type={field.type}
+                name={field.name}
+                value={selectedUser[field.name]}
+                onChange={handleInputChange}
+                required
+              />
+            )}
+          </div>
+        ))}
+
+        <button className="save-changes-button" type="submit">
           Save Changes
         </button>
       </form>

@@ -121,12 +121,9 @@ const UserForm = () => {
       >
         <UserDetailsForm
           selectedUser={selectedUser}
-          handleInputChange={inputChange} // Changed prop name to handleInputChange
-          handleSaveChanges={saveChanges} // Changed prop name to handleSaveChanges
+          handleInputChange={inputChange}
+          handleSaveChanges={saveChanges}
         />
-        <button className="cancel-button" onClick={handleCancel}>
-          Cancel
-        </button>
       </ReactModal>
       <div className="pagination">
         <button
