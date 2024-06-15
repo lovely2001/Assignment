@@ -20,7 +20,11 @@ const UserForm = () => {
   });
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
+
+  const usersPerPage = 7;
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
   useEffect(() => {
     fetchUsers();
@@ -46,7 +50,7 @@ const UserForm = () => {
     setShowDetails(true);
   };
 
-  const addUser = () => {
+    const addUser = () => {
     setSelectedUser({
       email: "",
       firstName: "",
@@ -74,13 +78,9 @@ const UserForm = () => {
         ? ref(usersRef, selectedUser.uid)
         : push(usersRef);
       await set(userRef, selectedUser);
-      console.log(
-        selectedUser.uid
-          ? "User details updated successfully!"
-          : "New user added successfully!"
-      );
       setShowDetails(false);
       fetchUsers();
+      alert("Details Saved")
     } catch (error) {
       console.error("Error updating user:", error.message);
     }
@@ -90,32 +90,47 @@ const UserForm = () => {
     setShowDetails(false);
   };
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
     <div className="update-profile-container">
       <h1>Profile Details</h1>
-      <ul className="user-list">
-        {currentUsers.map((user, index) => (
-          <li key={index}>
-            <button
-              className="user-email-button"
-              onClick={() => userClick(user)}
-            >
-              {user.email}
-            </button>
-          </li>
-        ))}
-      </ul>
+
+      <table className="user-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Date of Birth</th>
+            <th>Gender</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentUsers.map((user, index) => (
+            <tr key={index}>
+              <td>
+                <button onClick={() => userClick(user)}>
+                  {user.email}
+                </button>
+              </td>
+              <td>{user.firstName}</td>
+              <td>{user.lastName}</td>
+              <td>{user.dob}</td>
+              <td>{user.gender}</td>
+              <td>{user.phone}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
       <button className="add-user-button" onClick={addUser}>
-        {showDetails ? "Cancel Add User" : "Add User"}
+        Want to add More User Details ? <span style={{fontWeight: "500", color: "#0000FF" , marginLeft: "5px"}}> Click Here  </span>
       </button>
+
       <ReactModal
         isOpen={showDetails}
         onRequestClose={handleCancel}
-        contentLabel="User Details"
         className="modal"
         overlayClassName="overlay"
       >
@@ -125,18 +140,17 @@ const UserForm = () => {
           handleSaveChanges={saveChanges}
         />
       </ReactModal>
+
       <div className="pagination">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
-          style={{color : "524e94"}}
         >
           Previous
         </button>
         <button
           onClick={() => paginate(currentPage + 1)}
           disabled={currentUsers.length < usersPerPage}
-          style={{color : "524e94"}}
         >
           Next
         </button>
