@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth, createUserWithEmailAndPassword } from '../firebase';
 import '../Styles/SignupForm.css';
 
@@ -15,8 +15,8 @@ const SignupForm = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState(null);
-  const [redirectToProfile, setRedirectToProfile] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,16 +46,36 @@ const SignupForm = () => {
       });
 
       setUserProfile(newProfile);
-      setRedirectToProfile(true);
     } catch (err) {
       setError(err.message);
       console.error(err);
     }
   };
 
-  if (redirectToProfile && userProfile) {
-    return <Navigate to="/profile" state={{ userProfile }} />;
-  }
+  useEffect(() => {
+    if (userProfile) {
+      navigate('/profile', { state: { userProfile } });
+    }
+  }, [userProfile]);
+
+  const inputFields = [
+    [
+      { name: 'firstName', type: 'text', placeholder: 'First Name'},
+      { name: 'lastName', type: 'text', placeholder: 'Last Name' },
+    ],
+    [
+      { name: 'email', type: 'email', placeholder: 'Email Id' },
+      { name: 'gender', type: 'select', placeholder: 'Gender'},
+    ],
+    [
+      { name: 'phone', type: 'tel', placeholder: 'Phone Number'},
+      { name: 'dob', type: 'date', placeholder: 'Date of Birth'},
+    ],
+    [
+      { name: 'password', type: 'password', placeholder: 'Password'},
+      { name: 'confirmPassword', type: 'password', placeholder: 'Confirm Password'},
+    ],
+  ];
 
   return (
     <div className="signup-container">
@@ -64,86 +84,44 @@ const SignupForm = () => {
           Welcome to <span className="signup-brand-name">upliance</span>
         </p>
       </div>
+
       <div className="signup-card-right">
         <p className="signup-form-title">Sign Up</p>
         <form className="signup-form" onSubmit={handleSubmit}>
-          <div className="signup-row">
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-              placeholder="First Name"
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-              placeholder="Last Name"
-            />
-          </div>
-          <div className="signup-row">
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Email Id"
-            />
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div className="signup-row">
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              placeholder="Phone Number"
-            />
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="signup-row">
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Password"
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm Password"
-            />
-          </div>
+          {inputFields.map((row, rowIndex) => (
+            <div className="signup-row" key={rowIndex}>
+              {row.map((field, fieldIndex) => (
+                field.type !== 'select' ? (
+                  <input
+                    key={fieldIndex}
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    required
+                  />
+                ) : (
+                  <select
+                    key={fieldIndex}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">{field.placeholder}</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                )
+              ))}
+            </div>
+          ))}
+
           <button type="submit">SIGN UP</button>
-          
           {error && <p className="signup-error-message">{error}</p>}
+          
           <p className="signup-login-link">
             Already have an account? <Link to="/login">Sign In</Link>
           </p>
