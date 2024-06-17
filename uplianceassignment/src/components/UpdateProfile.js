@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getDatabase, ref, get, update, push, set } from "firebase/database";
+import { ref, get, push, set } from "firebase/database";
 import { db } from "../firebase";
 import UserDetailsForm from "./UserDetailsForm";
 import ReactModal from "react-modal";
