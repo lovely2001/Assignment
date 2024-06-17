@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { auth, signInWithEmailAndPassword } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 import "../Styles/LoginForm.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const { login } = useAuth();  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await login(email, password);
       console.log("Login successful");
     } catch (err) {
       setError(err.message);

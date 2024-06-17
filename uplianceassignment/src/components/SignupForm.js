@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { auth, createUserWithEmailAndPassword } from '../firebase';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import '../Styles/SignupForm.css';
 
 const SignupForm = () => {
@@ -15,8 +15,7 @@ const SignupForm = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,44 +35,29 @@ const SignupForm = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      const newProfile = { firstName, lastName, email, phone, gender, dob };
-
-      await fetch("https://form-assignment-70397-default-rtdb.firebaseio.com/users.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newProfile),
-      });
-
-      setUserProfile(newProfile);
+      await signup(firstName, lastName, email, phone, gender, dob, password);
     } catch (err) {
       setError(err.message);
       console.error(err);
     }
   };
 
-  useEffect(() => {
-    if (userProfile) {
-      navigate('/profile', { state: { userProfile } });
-    }
-  }, [userProfile]);
-
   const inputFields = [
     [
-      { name: 'firstName', type: 'text', placeholder: 'First Name'},
+      { name: 'firstName', type: 'text', placeholder: 'First Name' },
       { name: 'lastName', type: 'text', placeholder: 'Last Name' },
     ],
     [
       { name: 'email', type: 'email', placeholder: 'Email Id' },
-      { name: 'gender', type: 'select', placeholder: 'Gender'},
+      { name: 'gender', type: 'select', placeholder: 'Gender' },
     ],
     [
-      { name: 'phone', type: 'tel', placeholder: 'Phone Number'},
-      { name: 'dob', type: 'date', placeholder: 'Date of Birth'},
+      { name: 'phone', type: 'tel', placeholder: 'Phone Number' },
+      { name: 'dob', type: 'date', placeholder: 'Date of Birth' },
     ],
     [
-      { name: 'password', type: 'password', placeholder: 'Password'},
-      { name: 'confirmPassword', type: 'password', placeholder: 'Confirm Password'},
+      { name: 'password', type: 'password', placeholder: 'Password' },
+      { name: 'confirmPassword', type: 'password', placeholder: 'Confirm Password' },
     ],
   ];
 
